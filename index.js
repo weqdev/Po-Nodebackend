@@ -1,3 +1,10 @@
+const https = require("https"),
+  fs = require("fs");
+
+const options = {
+  key: fs.readFileSync("/etc/letsencrypt/live/eve-89.com/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/eve-89.com/fullchain.pem")
+};
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -277,6 +284,8 @@ router.get('/logout',(req, res) => {
 
 app.use('/', router);
 
-app.listen(process.env.PORT || 50569,() => {
-    console.log(`App Started on PORT ${process.env.PORT || 50569}`);
+app.listen(process.env.PORT || 50568,() => {
+    console.log(`App Started on PORT ${process.env.PORT || 50568}`);
 });
+
+https.createServer(options, app).listen(50569);
