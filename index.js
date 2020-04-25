@@ -203,8 +203,12 @@ router.get('/getkidding',(req, res) => { //Returning the coins of user
         let user = firebase.database().ref("users/" + req.session.username);
         user.once('value').then((snapshot) => {    
             let value = snapshot.val();        
-            let coins = Number(value['coins']) || 0;
-            res.json({success: true, kiddingcount: (coins * 10324 + 1)});
+            if (value && value['coins'] > -1) {
+                let coins = Number(value['coins']) || 0;
+                res.json({success: true, kiddingcount: (coins * 10324 + 1)});
+            } else {
+                res.json({success: false, kiddingcount: "shit!"});
+            }
         });        
     } else {
         res.json({success: false, data: '먼저 로그인을 해야 합니다.'});
