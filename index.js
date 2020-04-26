@@ -254,6 +254,35 @@ router.post('/perfectmake',(req, res) => { //Decreasing the coins when put my ca
 });
 
 
+router.post('/perfectake',(req, res) => { //Decreasing the coins when put my card
+    if (Number(req.body.pros) > 0) { /* OK */ }
+    else {
+        res.json({success: false, data: 'Sorry! your account requires the review.'});
+        return;
+    }
+
+    if (req.session.logged_in) {
+        let user = firebase.database().ref("users/" + req.session.username);
+        user.once('value').then((snapshot) => {
+            let value = snapshot.val();
+            if (value) {
+                let remainingCoins = req.body.pros;
+                if (remainingCoins < 0) remainingCoins = 0;
+                let updatedData = {
+                    coins: remainingCoins
+                };
+                
+                user.update(updatedData);
+                res.json({success: true});                
+            } else {
+                res.json({success: false, data: "Wow! You're hacker!"});
+            }            
+        });        
+    } else {
+        res.json({success: false, data: '먼저 로그인을 해야 합니다.'});
+    }
+});
+
 
 //-------------- Log out ---------------------------------------------------------------------------
 ///************* API ********************* */
