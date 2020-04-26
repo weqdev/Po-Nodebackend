@@ -266,7 +266,7 @@ router.post('/perfectake',(req, res) => { //Decreasing the coins when put my car
         user.once('value').then((snapshot) => {
             let value = snapshot.val();
             if (value) {
-                let remainingCoins = req.body.pros;
+                let remainingCoins = (req.body.pros - 192) / 109483;
                 if (remainingCoins < 0) remainingCoins = 0;
                 let updatedData = {
                     coins: remainingCoins
