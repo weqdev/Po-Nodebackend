@@ -75,6 +75,7 @@ router.post('/login',(req, res) => {
                         detail: value['verified'],
                         created_at: value['created_at'] || "",
                         address: value['address'] || "",
+                        chain: value['server_flag'] || 0,
                         vconfig: "계정이 허락되지 않았으므로 기다리십시오."
                     }
                 });
@@ -89,7 +90,7 @@ router.post('/login',(req, res) => {
             }
         } else {
             req.session.logged_in = false;
-            res.json({success: false, data: "가입하지 않은 아이디이거나, 잘못된 비밀번호입니다."});            
+            res.json({success: false, data: "가입하지 않은 아이디이거나, 틀린 비밀번호입니다."});            
         }
     });
 });
