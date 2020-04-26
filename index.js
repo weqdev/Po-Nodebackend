@@ -212,7 +212,7 @@ router.post('/getkidding',(req, res) => { //Returning the coins of user
             let value = snapshot.val();        
             if (value && value['coins'] > -1) {
                 let coins = Number(value['coins']) || 0;
-                res.json({success: true, kiddingcount: (coins * 10324 + 1)});
+                res.json({success: true, data: {kiddingcount: (coins * 10324 + 1)}});
             } else {
                 res.json({success: false, kiddingcount: "shit!"});
             }
