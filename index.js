@@ -205,7 +205,7 @@ router.post('/changeinfo', (req, res) => {
     }
 });
 
-router.get('/getkidding',(req, res) => { //Returning the coins of user
+router.post('/getkidding',(req, res) => { //Returning the coins of user
     if (req.session.logged_in) {
         let user = firebase.database().ref("users/" + req.session.username);
         user.once('value').then((snapshot) => {    
