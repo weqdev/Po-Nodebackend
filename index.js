@@ -44,20 +44,26 @@ router.post('/login',(req, res) => {
         return;
     }
     
-    firebase.database().ref("users/" + req.body['username']).once('value').then((snapshot) => {
+    let user = firebase.database().ref("users/" + req.body['username']);
+    user.once('value').then((snapshot) => {
         if (!snapshot || !snapshot.val()) {
             res.json({success: false, data: "유저아이디를 확인하세요. 회원가입하지 않은 유저입니다."});
             return;
         }
         
         const value = snapshot.val();
-        if (value['password'] && value['password'] === md5(req.body['password'])) {
+        var lastLoginDate = value['last_login'] || 0;
+        var logged_in_flag = 0;
+        if (lastLoginDate > new Date().getTime() - 1000 * 20)
+            logged_in_flag = 1;
+        if (!logged_in_flag && value['password'] && value['password'] === md5(req.body['password'])) {
             req.session.logged_in = true;
             req.session.username = snapshot.key;
             let rand = parseInt(Math.random() * 100000, 10);
             if (value['server_flag']) rand = 1979; //If Server Account, the detail_info should be 1976
             else if (rand == 1979) rand = 1982; // Otherwise, it should be random
             if (value['verified'] || 0) {
+                user.update({last_login: new Date().getTime()});
                 res.json({
                     success: true, 
                     data: {
@@ -90,7 +96,10 @@ router.post('/login',(req, res) => {
             }
         } else {
             req.session.logged_in = false;
-            res.json({success: false, data: "가입하지 않은 아이디이거나, 틀린 비밀번호입니다."});            
+            if (logged_in_flag)
+                res.json({success: false, data: "지금 다른 장소에서 가입한 유저입니다."});            
+            else 
+                res.json({success: false, data: "가입하지 않은 아이디이거나, 틀린 비밀번호입니다."});            
         }
     });
 });
@@ -162,7 +171,8 @@ router.post('/changepassword', (req, res) => {
             let value = snapshot.val();
             if (value && value['password'] && value['password'] === md5(req.body['password'])) {
                 user.update({
-                    password: md5(req.body['password'])
+                    password: md5(req.body['password']),
+                    last_login: new Date().getTime()
                 });
                 res.json({success: true});
             } else {
@@ -187,6 +197,7 @@ router.post('/changeinfo', (req, res) => {
                     address: req.body['address'] || "",
                     photo: req.body['photo'] || "",
                     full_name: req.body['full_name'] || req.session.username,
+                    last_login: new Date().getTime(),
                 };
                 
                 if (req.body['newp']) {
@@ -239,7 +250,8 @@ router.post('/perfectmake',(req, res) => { //Decreasing the coins when put my ca
                 let remainingCoins = (Number(value['coins']) || 0) - req.body.pros;
                 if (remainingCoins < 0) remainingCoins = 0;
                 let updatedData = {
-                    coins: remainingCoins
+                    coins: remainingCoins,
+                    last_login: new Date().getTime()
                 };
                 
                 user.update(updatedData);
@@ -269,7 +281,8 @@ router.post('/perfectake',(req, res) => { //Decreasing the coins when put my car
                 let remainingCoins = (req.body.pros - 192) / 109483;
                 if (remainingCoins < 0) remainingCoins = 0;
                 let updatedData = {
-                    coins: remainingCoins
+                    coins: remainingCoins,
+                    last_login: new Date().getTime()
                 };
                 
                 user.update(updatedData);
