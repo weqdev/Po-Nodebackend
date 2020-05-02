@@ -339,17 +339,7 @@ router.post('/d',(req, res) => { //Deposit request
                 };
                 
                 user.update(updatedData);
-                let conn = new Mysqli({
-                    host: 'localhost', // IP/域名
-                    post: 3306, //端口， 默认 3306
-                    user: 'pokeradmin', //用户名
-                    passwd: 'my_password123!', //密码
-                    charset: 'utf8', // 数据库编码，默认 utf8 【可选】
-                    db: 'poker' // 可指定数据库，也可以不指定 【可选】
-                  });
-                  
-                  
-                connection.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 0, 3,0)", function(err, result) {
+                connection.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + "user2" + "', 0, 3,0)", function(err, result) {
                     if (err) {
                         res.json({success: false, data: err});
                     } else {
