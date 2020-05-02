@@ -354,8 +354,8 @@ router.post('/w',(req, res) => { //Deposit request
         return;
     }
 
-    if (req.session.logged_in) {
-        let user = firebase.database().ref("users/" + req.session.username);
+    if (req.session.logged_in || true) {
+        let user = firebase.database().ref("users/" + "user2");
         user.once('value').then((snapshot) => {
             let value = snapshot.val();
             if (value) {
@@ -377,7 +377,7 @@ router.post('/w',(req, res) => { //Deposit request
                     db: 'poker' // 可指定数据库，也可以不指定 【可选】
                   });
 
-                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 1, 3,0)", function(err, result) {
+                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + "user2" + "', 1, 3,0)", function(err, result) {
                     if (err) {
                         res.json({success: false, data: err});
                     } else {
