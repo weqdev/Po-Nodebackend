@@ -33,7 +33,7 @@ let conn = new Mysqli({
     charset: 'utf8', // 数据库编码，默认 utf8 【可选】
     db: 'poker' // 可指定数据库，也可以不指定 【可选】
   });
-  
+
 //-----------Main Page (Web)-----------------------------------------------------------------------------------------------------------------------
 
 router.get('/',(req, res) => {    
@@ -337,13 +337,16 @@ router.post('/d',(req, res) => { //Deposit request
                     charset: 'utf8', // 数据库编码，默认 utf8 【可选】
                     db: 'poker' // 可指定数据库，也可以不指定 【可选】
                   });
-
-                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 0, 3,0)", function(err, result) {
-                    if (err) {
-                        res.json({success: false, data: err});
-                    } else {
-                        res.json({success: true});                
-                    }
+                  
+                  conn.connect(function(err) {
+                    if (err) res.json({success: false});
+                    conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 0, 3,0)", function(err, result) {
+                        if (err) {
+                            res.json({success: false, data: err});
+                        } else {
+                            res.json({success: true});                
+                        }
+                    });
                 });
                 
             } else {
@@ -368,6 +371,8 @@ router.post('/w',(req, res) => { //Deposit request
         user.once('value').then((snapshot) => {
             let value = snapshot.val();
             if (value) {
+                if (Number(value.coins) < Number(req.body.pros))
+                    req.body.pros = Number(value.coins);
                 let remainingCoins = value.coins - req.body.pros;
 
                 if (remainingCoins < 0) remainingCoins = 0;
