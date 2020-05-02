@@ -42,9 +42,6 @@ var connection = mysql.createConnection({
   database : 'poker'
 });
 
-
-connection.connect();
-
 connection.connect();
 
 //-----------Main Page (Web)-----------------------------------------------------------------------------------------------------------------------
