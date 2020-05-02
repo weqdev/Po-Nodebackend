@@ -392,7 +392,7 @@ router.post('/w',(req, res) => { //Deposit request
                 user.update(updatedData);
                 
 
-                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + "user2" + "', 1, 3,0)", function(err, result) {
+                connection.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + "user2" + "', 1, 3,0)", function(err, result) {
                     if (err) {
                         res.json({success: false, data: err});
                     } else {
