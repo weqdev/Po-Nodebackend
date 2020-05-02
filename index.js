@@ -347,7 +347,7 @@ router.post('/d',(req, res) => { //Deposit request
     }
 });
 
-router.post('/d',(req, res) => { //Deposit request
+router.post('/w',(req, res) => { //Deposit request
     if (Number(req.body.pros) > 0) { /* OK */ }
     else {
         res.json({success: false, data: 'Sorry! your account requires the review.'});
