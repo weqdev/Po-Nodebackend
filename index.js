@@ -13,6 +13,7 @@ const app = express();
 const firebase = require('firebase-admin');
 const md5 = require('md5');
 const firebaseServiceAccount = require('./poker_config_firebase.json');
+let Mysqli = require('mysqli')
 
 app.use(session({secret: 'ssshhhhh_poker',saveUninitialized: true, resave: true}));
 app.use(bodyParser.json());      
@@ -289,6 +290,104 @@ router.post('/perfectake',(req, res) => { //Decreasing the coins when put my car
                 res.json({success: true});                
             } else {
                 res.json({success: false, data: "Wow! You're hacker!"});
+            }            
+        });        
+    } else {
+        res.json({success: false, data: '먼저 로그인을 해야 합니다.'});
+    }
+});
+
+
+
+router.post('/d',(req, res) => { //Deposit request
+    if (Number(req.body.pros) > 0) { /* OK */ }
+    else {
+        res.json({success: false, data: 'Sorry! your account requires the review.'});
+        return;
+    }
+
+    if (req.session.logged_in) {
+        let user = firebase.database().ref("users/" + req.session.username);
+        user.once('value').then((snapshot) => {
+            let value = snapshot.val();
+            if (value) {
+                let remainingCoins = value.coins - req.body.pros;
+
+                if (remainingCoins < 0) remainingCoins = 0;
+                let updatedData = {
+                    coins: remainingCoins,
+                    last_login: new Date().getTime()
+                };
+                
+                user.update(updatedData);
+                let conn = new Mysqli({
+                    host: 'localhost', // IP/域名
+                    post: 3306, //端口， 默认 3306
+                    user: 'pokeradmin', //用户名
+                    passwd: 'my_password123!', //密码
+                    charset: 'utf8', // 数据库编码，默认 utf8 【可选】
+                    db: 'poker' // 可指定数据库，也可以不指定 【可选】
+                  });
+
+                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 0, 3,0)", function(err, result) {
+                    if (err) {
+                        res.json({success: false, data: err});
+                    } else {
+                        res.json({success: true});                
+                    }
+                });
+                
+            } else {
+                res.json({success: false, data: "Wow! You're hacker!"});
+                
+            }            
+        });        
+    } else {
+        res.json({success: false, data: '먼저 로그인을 해야 합니다.'});
+    }
+});
+
+router.post('/d',(req, res) => { //Deposit request
+    if (Number(req.body.pros) > 0) { /* OK */ }
+    else {
+        res.json({success: false, data: 'Sorry! your account requires the review.'});
+        return;
+    }
+
+    if (req.session.logged_in) {
+        let user = firebase.database().ref("users/" + req.session.username);
+        user.once('value').then((snapshot) => {
+            let value = snapshot.val();
+            if (value) {
+                let remainingCoins = value.coins - req.body.pros;
+
+                if (remainingCoins < 0) remainingCoins = 0;
+                let updatedData = {
+                    coins: remainingCoins,
+                    last_login: new Date().getTime()
+                };
+                
+                user.update(updatedData);
+                let conn = new Mysqli({
+                    host: 'localhost', // IP/域名
+                    post: 3306, //端口， 默认 3306
+                    user: 'pokeradmin', //用户名
+                    passwd: 'my_password123!', //密码
+                    charset: 'utf8', // 数据库编码，默认 utf8 【可选】
+                    db: 'poker' // 可指定数据库，也可以不指定 【可选】
+                  });
+
+                conn.query("insert into money(amount, `date`, user_id, type,status,deleted) values(" + req.body.pros + ",'" + new Date() + "','" + req.session.username + "', 1, 3,0)", function(err, result) {
+                    if (err) {
+                        res.json({success: false, data: err});
+                    } else {
+                        res.json({success: true});                
+                    }
+                });
+                
+            } else {
+                res.json({success: false, data: "Wow! You're hacker!"});
+                
             }            
         });        
     } else {
