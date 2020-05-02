@@ -15,6 +15,7 @@
     "express-session": "^1.17.0",
     "firebase-admin": "^8.10.0",
     "md5": "^2.2.1",
+    "mysql": "^2.18.1",
     "mysqli": "^3.0.11"
   }
 }
